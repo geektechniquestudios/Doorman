@@ -11,7 +11,7 @@ RELAY1 = 17
 RELAY2 = 27
 
 maxTime = .5
-threshold1 = 190
+threshold1 = 150
 threshold2 = 70
 
 distance1Arr = []
@@ -50,6 +50,8 @@ try:
 #	    if distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1:
 #	        GPIO.output(RELAY2, True)
 
+        time.sleep(0.05)
+
         GPIO.output(TRIG2, True)
         time.sleep(0.0001)
         GPIO.output(TRIG2, False)
@@ -72,25 +74,25 @@ try:
         distance1Arr.append(distance1)
         distance2Arr.append(distance2)
 
-        if len(distance1Arr) > 3:
-            if distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2:
+        if len(distance1Arr) > 4:
+            if distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
                 GPIO.output(RELAY1, True)
                 GPIO.output(RELAY2, True)
             distance1Arr.pop(0)
             distance2Arr.pop(0)
 
         #if sensor inside is tripped, turn on both lights
-            if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1:
+            if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
                 GPIO.output(RELAY1, False)
                 GPIO.output(RELAY2, False)
-                time.sleep(10)
+                time.sleep(240)
 #                GPIO.output(RELAY1, True)
 #                GPIO.output(RELAY2, True)
 
 #if sensor closest to the door is tripped, just turn on inside light
-            if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2:
+            if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
-                time.sleep(10)
+                time.sleep(90)
 #                GPIO.output(RELAY2, True)
         time.sleep(.05)
 except Exception as e:
