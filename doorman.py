@@ -13,8 +13,8 @@ RELAY1 = 17
 RELAY2 = 27
 
 maxTime = .5
-threshold1 = 180
-threshold2 = 70
+threshold1 = 210
+threshold2 = 65
 
 distance1Arr = []
 distance2Arr = []
@@ -51,9 +51,6 @@ try:
         sig_time = end-start
         distance1 = sig_time / 0.000058
 
-#	    if distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1:
-#	        GPIO.output(RELAY2, True)
-
         time.sleep(0.05)
 
         GPIO.output(TRIG2, True)
@@ -85,12 +82,12 @@ try:
             distance1Arr.pop(0)
             distance2Arr.pop(0)
 
-        #if sensor inside is tripped, turn on both lights
+            #if sensor inside is tripped, turn on both lights
             if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
                 GPIO.output(RELAY1, False)
                 GPIO.output(RELAY2, False)
                 time.sleep(60)
-#if sensor closest to the door is tripped, just turn on inside light
+            #if sensor closest to the door is tripped, just turn on inside light
             if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
                 time.sleep(45)
@@ -103,4 +100,6 @@ try:
         time.sleep(.05)
 except Exception as e:
     print(e)
+    GPIO.cleanup()
+finally:
     GPIO.cleanup()
