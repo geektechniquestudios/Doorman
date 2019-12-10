@@ -15,8 +15,6 @@ RELAY2 = 27
 maxTime = .5
 threshold1 = 210
 threshold2 = 65
-distance1 = 0.0
-distance2 = 0.0
 sleepDur = 0.03
 
 distance1Arr = []
@@ -53,13 +51,13 @@ def getDistance(trig, echo):
     distance = sig_time / 0.000058
 
     time.sleep(sleepDur)
-
+    return distance
 
 try:
     while True:
 
-        getDistance(TRIG1, ECHO1)
-        getDistance(TRIG2, ECHO2)
+        distance1 = getDistance(TRIG1, ECHO1)
+        distance2 = getDistance(TRIG2, ECHO2)
 
         print('Distance1: {} cm ---- Distance2: {} cm'.format(distance1, distance2))
 
