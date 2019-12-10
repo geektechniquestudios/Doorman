@@ -17,6 +17,11 @@ threshold1 = 210
 threshold2 = 65
 sleepDur = 0.03
 
+#for testing
+#threshold1 = 10
+#threshold2 = 10
+
+
 distance1Arr = []
 distance2Arr = []
 
@@ -30,7 +35,8 @@ GPIO.setup(RELAY2, GPIO.OUT)
 GPIO.output(RELAY1, True)
 GPIO.output(RELAY2, True)
 
-#camera = PiCamera()
+camera = PiCamera()
+camera.rotation = 270
 
 def getDistance(trig, echo):
     GPIO.output(trig, True)
@@ -83,13 +89,15 @@ try:
             #if sensor closest to the door is tripped, just turn on inside light
             if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
-                time.sleep(45)
-#               now = datetime.now()
-#               camera.start_preview() #probably not needed
-#               camera.start_recording('smb://readyshare/roach media/securityFootage' + now.strftime("%m/%d/%Y, %H:%M:%S") + '.h264')
-#               time.sleep(10)
-#               camera.stop_recording()
-#               camera.stop_preview() #probably not needed
+                #time.sleep(45)
+                now = datetime.now()
+                camera.start_preview() #probably not needed
+                camera.start_recording('./doorcam/security.h264') # + now.strftime("%m/%d/%Y, %H:%M:%S") + '.h264')
+                #scp video to other computer
+                time.sleep(10)
+                camera.stop_recording()
+                camera.stop_preview() #probably not needed
+                time.sleep(35)
         time.sleep(sleepDur)
 except Exception as e:
     print(e)
