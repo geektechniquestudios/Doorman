@@ -15,6 +15,9 @@ RELAY2 = 27
 maxTime = .5
 threshold1 = 210
 threshold2 = 65
+distance1 = 0.0
+distance2 = 0.0
+sleepDur = 0.03
 
 distance1Arr = []
 distance2Arr = []
@@ -31,54 +34,46 @@ GPIO.output(RELAY2, True)
 
 #camera = PiCamera()
 
+def getDistance(trig, echo):
+    GPIO.output(trig, True)
+    time.sleep(0.0001)
+    GPIO.output(trig, False)
+
+    start = time.time()
+    timeout = start + maxTime
+    while GPIO.input(echo) == False and start < timeout:
+        start = time.time()
+
+    end = time.time()
+    timeout = end + maxTime
+    while GPIO.input(echo) == True and end < timeout:
+        end = time.time()
+
+    sig_time = end-start
+    distance = sig_time / 0.000058
+
+    time.sleep(sleepDur)
+
+
 try:
     while True:
 
-        GPIO.output(TRIG1, True)
-        time.sleep(0.0001)
-        GPIO.output(TRIG1, False)
-
-        start = time.time()
-        timeout = start + maxTime
-        while GPIO.input(ECHO1) == False and start < timeout:
-            start = time.time()
-
-        end = time.time()
-        timeout = end + maxTime
-        while GPIO.input(ECHO1) == True and end < timeout:
-            end = time.time()
-
-        sig_time = end-start
-        distance1 = sig_time / 0.000058
-
-        time.sleep(0.05)
-
-        GPIO.output(TRIG2, True)
-        time.sleep(0.0001)
-        GPIO.output(TRIG2, False)
-
-        start2 = time.time()
-        timeout2 = start2 + maxTime
-        while GPIO.input(ECHO2) == False and start2 < timeout2:
-            start2 = time.time()
-
-        end2 = time.time()
-        timeout2 = end2 + maxTime
-        while GPIO.input(ECHO2) == True and end2 < timeout2:
-            end2 = time.time()
-
-        sig_time2 = end2-start2
-        distance2 = sig_time2 / 0.000058
+        getDistance(TRIG1, ECHO1)
+        getDistance(TRIG2, ECHO2)
 
         print('Distance1: {} cm ---- Distance2: {} cm'.format(distance1, distance2))
 
+        #add new values to arrays
         distance1Arr.append(distance1)
         distance2Arr.append(distance2)
 
+        #makes sure at least 4 lines have been printed before using array
         if len(distance1Arr) > 4:
+            #if distance thresholds are cleared, turn on the light
             if distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
                 GPIO.output(RELAY1, True)
                 GPIO.output(RELAY2, True)
+            #maintain arrays by removing old values
             distance1Arr.pop(0)
             distance2Arr.pop(0)
 
@@ -97,7 +92,7 @@ try:
 #               time.sleep(10)
 #               camera.stop_recording()
 #               camera.stop_preview() #probably not needed
-        time.sleep(.05)
+        time.sleep(sleepDur)
 except Exception as e:
     print(e)
     GPIO.cleanup()
