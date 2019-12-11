@@ -1,2 +1,5 @@
+#images and videos
 *.jpg
 *.h264
+
+security*
