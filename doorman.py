@@ -92,7 +92,7 @@ try:
                 #time.sleep(45)
                 now = datetime.now()
                 camera.start_preview() #probably not needed
-                camera.start_recording('/home/pi/Desktop/FrontDoorSensor/doorcam/security.h264') # + now.strftime("%m/%d/%Y %H:%M:%S") + '.h264')
+                camera.start_recording('/home/pi/Desktop/FrontDoorSensor/doorcam/security' + now.strftime(" %m-%d-%Y %H:%M:%S") + '.h264')
                 #scp video to other computer @todo
                 time.sleep(10)
                 camera.stop_recording()
