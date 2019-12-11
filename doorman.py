@@ -13,13 +13,13 @@ RELAY1 = 17
 RELAY2 = 27
 
 maxTime = .5
-#threshold1 = 210
-#threshold2 = 65
-sleepDur = 0.03
+threshold1 = 210
+threshold2 = 65
+sleepDur = 0.02
 
 #for testing
-threshold1 = 10
-threshold2 = 10
+#threshold1 = 10
+#threshold2 = 10
 
 
 distance1Arr = []
@@ -92,7 +92,7 @@ try:
                 #time.sleep(45)
                 now = datetime.now()
                 camera.start_preview() #probably not needed
-                camera.start_recording('/home/pi/Desktop/FrontDoorSensor/doorcam/security' + now.strftime(" %m-%d-%Y %H:%M:%S") + '.h264')
+                camera.start_recording('/home/pi/Desktop/FrontDoorSensor/doorcam/security' + now.strftime("%m-%d-%Y--%H:%M:%S") + '.h264')
                 #scp video to other computer @todo
                 time.sleep(10)
                 camera.stop_recording()
