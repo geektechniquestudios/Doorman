@@ -1,7 +1,9 @@
 import RPi.GPIO as GPIO
 import time
+import subprocess
 from picamera import PiCamera
 from datetime import datetime
+
 
 GPIO.setmode(GPIO.BCM)
 
@@ -92,8 +94,13 @@ try:
                 #time.sleep(45)
                 now = datetime.now()
                 camera.start_preview() #probably not needed
-                camera.start_recording('/home/pi/Desktop/FrontDoorSensor/doorcam/security' + now.strftime("%m-%d-%Y--%H:%M:%S") + '.h264')
-                #scp video to other computer @todo
+                recordingFilename = 'security' + now.strftime("%m-%d-%Y--%H:%M:%S") + '.h264'
+                recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
+                camera.start_recording(recordingPath + recordingFilename)
+
+                #scp video to other computer @todo add ip of new rpi 
+                #subprocess.call(['scp ' + recordingPatth + recordingFilename + 'pi@10.0.0.x:~/Desktop/security_footage/' + recordingFilename], shell = True)
+
                 time.sleep(10)
                 camera.stop_recording()
                 camera.stop_preview() #probably not needed
