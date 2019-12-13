@@ -108,7 +108,7 @@ try:
 
                 #scp video to other computer @todo add ip of new rpi and make security_footage folder
                 try:
-                    subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:~/Desktop/security_footage/' + recordingFilename], shell = True)
+                    subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
                     subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
                     print('Local file deleted')
                 except:
