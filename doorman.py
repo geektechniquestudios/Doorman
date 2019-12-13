@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 import subprocess
-#import paramiko
 from picamera import PiCamera
 from datetime import datetime
 
@@ -44,12 +43,6 @@ GPIO.output(RELAY2, True)
 #setup pi camera
 camera = PiCamera()
 camera.rotation = 270
-
-#establish ssh connection for backing up security data
-#ssh = paramiko.SSHClient() 
-#ssh.load_host_keys(os.path.expanduser(os.path.join("~", ".ssh", "known_hosts")))
-#ssh.connect('10.0.0.4', username='pc', password='Mgknkd;1991')
-
 
 #method for ultrasonic sensors
 def getDistance(trig, echo):
@@ -113,14 +106,13 @@ try:
                 camera.stop_recording()
                 camera.stop_preview()
 
-                #scp video to other computer @todo add ip of new rpi and make security_footage folder #needs work
-                subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:~/Desktop/security_footage/' + recordingFilename, 'Mgknkd;1991'], shell = True)
-
-                #sftp = ssh.open_sftp()
-                #sftp.put(recordingPath + recordingFilename, '/home/pi/Desktop/' + recordingFilename)
-                #sftp.close()
-                #ssh.close()
-
+                #scp video to other computer @todo add ip of new rpi and make security_footage folder
+                try:
+                    subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:~/Desktop/security_footage/' + recordingFilename], shell = True)
+                    subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
+                    print('Local file deleted')
+                except:
+                    print('Failed to backup security footage to server')
                 time.sleep(35)
         time.sleep(sleepDur)
 except Exception as e:
