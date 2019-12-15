@@ -20,6 +20,8 @@ threshold1 = 210
 threshold2 = 65
 sleepDur = 0.02
 
+recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
+
 #for testing
 #threshold1 = 10
 #threshold2 = 10
@@ -66,16 +68,16 @@ def getDistance(trig, echo):
     time.sleep(sleepDur)
     return distance
 
-def recordVideo(recordingTime):
+def recordVideo(recordingTime, showPreview):
     now = datetime.now()
-    camera.start_preview()
+    if showPreview == True
+        camera.start_preview()
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
-    recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
     camera.start_recording(recordingPath + recordingFilename)
-
     time.sleep(recordingTime)
     camera.stop_recording()
-    camera.stop_preview()
+    if showPreview == True
+        camera.stop_preview()
 
     #scp video to other computer @todo add ip of new rpi and make security_footage folder
     try:
@@ -87,7 +89,6 @@ def recordVideo(recordingTime):
 try:
     while True:
 
-        
         #get distance from sensors
         distance1 = getDistance(TRIG1, ECHO1)
         distance2 = getDistance(TRIG2, ECHO2)
@@ -114,13 +115,13 @@ try:
             if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
                 GPIO.output(RELAY1, False)
                 GPIO.output(RELAY2, False)
-                recordVideo(30)
+                recordVideo(30, False)
                 time.sleep(45)
 
             #if sensor closest to the door is tripped, turn on inside light only and record
             if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
-                recordVideo(10)
+                recordVideo(10, True)
                 time.sleep(50)
                 
         time.sleep(sleepDur)
