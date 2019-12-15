@@ -70,13 +70,13 @@ def getDistance(trig, echo):
 
 def recordVideo(recordingTime, showPreview):
     now = datetime.now()
-    if showPreview == True
+    if showPreview == True:
         camera.start_preview()
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
     camera.start_recording(recordingPath + recordingFilename)
     time.sleep(recordingTime)
     camera.stop_recording()
-    if showPreview == True
+    if showPreview == True:
         camera.stop_preview()
 
     #scp video to other computer @todo add ip of new rpi and make security_footage folder
