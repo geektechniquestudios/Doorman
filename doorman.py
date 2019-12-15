@@ -66,9 +66,28 @@ def getDistance(trig, echo):
     time.sleep(sleepDur)
     return distance
 
+def recordVideo(recordingTime)
+    now = datetime.now()
+    camera.start_preview()
+    recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
+    recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
+    camera.start_recording(recordingPath + recordingFilename)
+
+    time.sleep(recordingTime)
+    camera.stop_recording()
+    camera.stop_preview()
+
+    #scp video to other computer @todo add ip of new rpi and make security_footage folder
+    try:
+        subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
+        subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
+        print('Local file deleted')
+    except:
+        print('Failed to backup security footage to server')
 try:
     while True:
 
+        #get distance from sensors
         distance1 = getDistance(TRIG1, ECHO1)
         distance2 = getDistance(TRIG2, ECHO2)
 
@@ -80,43 +99,31 @@ try:
 
         #makes sure at least 4 lines have been printed before using array
         if len(distance1Arr) > 4:
-            #if distance thresholds are cleared, turn on the light
+
+            #if distance thresholds are cleared, turn off the light
             if distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
                 GPIO.output(RELAY1, True)
                 GPIO.output(RELAY2, True)
+
             #maintain arrays by removing old values
             distance1Arr.pop(0)
             distance2Arr.pop(0)
 
-            #if sensor inside is tripped, turn on both lights #may consider recording here too
+            #if sensor inside is tripped, turn on both lights and record
             if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
                 GPIO.output(RELAY1, False)
                 GPIO.output(RELAY2, False)
-                time.sleep(60)
-            #if sensor closest to the door is tripped, turn on inside light only
+                recordVideo(30)
+                time.sleep(45)
+                
+            #if sensor closest to the door is tripped, turn on inside light only and record
             if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
-                now = datetime.now()
-                camera.start_preview()
-                recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
-                recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
-                camera.start_recording(recordingPath + recordingFilename)
-
-                time.sleep(10)
-                camera.stop_recording()
-                camera.stop_preview()
-
-                #scp video to other computer @todo add ip of new rpi and make security_footage folder
-                try:
-                    subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
-                    subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
-                    print('Local file deleted')
-                except:
-                    print('Failed to backup security footage to server')
-                time.sleep(35)
+                recordVideo(10)
+                time.sleep(50)
+                
         time.sleep(sleepDur)
 except Exception as e:
     print(e)
-    GPIO.cleanup()
 finally:
     GPIO.cleanup()
