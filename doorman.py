@@ -66,7 +66,7 @@ def getDistance(trig, echo):
     time.sleep(sleepDur)
     return distance
 
-def recordVideo(recordingTime)
+def recordVideo(recordingTime):
     now = datetime.now()
     camera.start_preview()
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
@@ -87,6 +87,7 @@ def recordVideo(recordingTime)
 try:
     while True:
 
+        
         #get distance from sensors
         distance1 = getDistance(TRIG1, ECHO1)
         distance2 = getDistance(TRIG2, ECHO2)
@@ -115,7 +116,7 @@ try:
                 GPIO.output(RELAY2, False)
                 recordVideo(30)
                 time.sleep(45)
-                
+
             #if sensor closest to the door is tripped, turn on inside light only and record
             if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
