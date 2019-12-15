@@ -74,13 +74,15 @@ def recordVideo(recordingTime, showPreview):
         camera.start_preview()
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
     camera.start_recording(recordingPath + recordingFilename)
+    print('Now Recording')
     time.sleep(recordingTime)
     camera.stop_recording()
     if showPreview == True:
         camera.stop_preview()
 
-    #scp video to other computer @todo add ip of new rpi and make security_footage folder
+    #scp video to other computer 
     try:
+        print('Sending video to file server')
         subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
         subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
         print('Local file deleted')
