@@ -71,7 +71,7 @@ def getDistance(trig, echo):
 def recordVideo(recordingTime, showPreview):
     now = datetime.now()
     if showPreview == True:
-        camera.start_preview()
+        camera.start_preview(fullscreen=False, window = (100, 20, 640, 480))
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
     camera.start_recording(recordingPath + recordingFilename)
     print('Now Recording')
