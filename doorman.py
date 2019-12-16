@@ -22,6 +22,7 @@ sleepDur = 0.02
 
 recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
 
+tickCounter = 0
 #for testing
 #threshold1 = 10
 #threshold2 = 10
@@ -70,7 +71,7 @@ def getDistance(trig, echo):
 
 def recordVideo(recordingTime):
     now = datetime.now()
-    camera.start_preview(fullscreen=False, window = (10, 360, 640, 480))
+    camera.start_preview(fullscreen=False, window = (170, 485, 640, 480))
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
     camera.start_recording(recordingPath + recordingFilename)
     print('Now Recording')
@@ -103,7 +104,7 @@ try:
         if len(distance1Arr) > 4:
 
             #if distance thresholds are cleared, turn off the light
-            if distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
+            if tickCounter <= 0 and distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
                 GPIO.output(RELAY1, True)
                 GPIO.output(RELAY2, True)
 
@@ -112,19 +113,23 @@ try:
             distance2Arr.pop(0)
 
             #if sensor inside is tripped, turn on both lights and record
-            if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
+            if tickCounter > 0 and distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
                 GPIO.output(RELAY1, False)
                 GPIO.output(RELAY2, False)
-                recordVideo(30) #, False)
-                time.sleep(45)
+                recordVideo(30)
+                tickCounter = 100 #change after testing 
+                #time.sleep(45)
 
             #if sensor closest to the door is tripped, turn on inside light only and record
-            if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
+            if tickCounter > 0 distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
-                recordVideo(10) #, True)
-                time.sleep(50)
+                recordVideo(15) 
+                tickCounter = 100
+                #time.sleep(50)
                 
         time.sleep(sleepDur)
+        if tickCounter < 0:
+            tickCounter--
 except Exception as e:
     print(e)
 finally:
