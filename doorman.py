@@ -117,13 +117,13 @@ try:
             if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
                 GPIO.output(RELAY1, False)
                 GPIO.output(RELAY2, False)
-                recordVideo(30, False)
+                recordVideo(30) #, False)
                 time.sleep(45)
 
             #if sensor closest to the door is tripped, turn on inside light only and record
             if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
                 GPIO.output(RELAY2, False)
-                recordVideo(10, True)
+                recordVideo(10) #, True)
                 time.sleep(50)
                 
         time.sleep(sleepDur)
