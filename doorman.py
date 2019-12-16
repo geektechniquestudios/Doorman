@@ -28,8 +28,8 @@ tickCounter = 0 # 100 ticks is about 8 seconds
 #threshold2 = 10
 
 #arrays for fault tolerance
-distance1Arr = []
-distance2Arr = []
+distance1Arr = [300, 300, 300, 300]
+distance2Arr = [300, 300, 300, 300]
 
 #GPIO setup
 GPIO.setup(TRIG1, GPIO.OUT)
@@ -101,31 +101,31 @@ try:
         distance2Arr.append(distance2)
 
         #makes sure at least 4 lines have been printed before using array
-        if len(distance1Arr) > 4:
+        #if len(distance1Arr) > 4:
 
-            #if distance thresholds are cleared, turn off the light
-            if tickCounter <= 0 and distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
-                GPIO.output(RELAY1, True)
-                GPIO.output(RELAY2, True)
+        #if distance thresholds are cleared, turn off the light
+        if tickCounter <= 0 and distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
+            GPIO.output(RELAY1, True)
+            GPIO.output(RELAY2, True)
 
-            #maintain arrays by removing old values
-            distance1Arr.pop(0)
-            distance2Arr.pop(0)
+        #maintain arrays by removing old values
+        distance1Arr.pop(0)
+        distance2Arr.pop(0)
 
-            #if sensor inside is tripped, turn on both lights and record
-            if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
-                GPIO.output(RELAY1, False)
-                GPIO.output(RELAY2, False)
-                if tickCounter == 0:
-                    recordVideo(30)
-                tickCounter = 800 #about a minute
+        #if sensor inside is tripped, turn on both lights and record
+        if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
+            GPIO.output(RELAY1, False)
+            GPIO.output(RELAY2, False)
+            if tickCounter == 0:
+                recordVideo(30)
+            tickCounter = 800 #about a minute
 
-            #if sensor closest to the door is tripped, turn on inside light only and record
-            if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
-                GPIO.output(RELAY2, False)
-                if tickCounter == 0:
-                    recordVideo(15)
-                tickCounter = 800 #about a minute
+        #if sensor closest to the door is tripped, turn on inside light only and record
+        if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
+            GPIO.output(RELAY2, False)
+            if tickCounter == 0:
+                recordVideo(15)
+            tickCounter = 800 #about a minute
 
         if tickCounter > 0:
             tickCounter = tickCounter - 1
