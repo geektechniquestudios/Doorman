@@ -68,16 +68,14 @@ def getDistance(trig, echo):
     time.sleep(sleepDur)
     return distance
 
-def recordVideo(recordingTime): #, showPreview):
+def recordVideo(recordingTime):
     now = datetime.now()
-    #if showPreview == True:
-    camera.start_preview(fullscreen=False, window = (100, 320, 640, 480))
+    camera.start_preview(fullscreen=False, window = (10, 360, 640, 480))
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
     camera.start_recording(recordingPath + recordingFilename)
     print('Now Recording')
     time.sleep(recordingTime)
     camera.stop_recording()
-    #if showPreview == True:
     camera.stop_preview()
 
     #scp video to other computer 
