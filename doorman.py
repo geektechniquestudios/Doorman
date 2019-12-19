@@ -92,6 +92,7 @@ def recordVideo():
 
 def setState(state):
     global tickCounter
+    global inOnVar
 
     if state == 'off':
         GPIO.output(RELAY1, True)
