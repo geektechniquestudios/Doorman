@@ -80,7 +80,7 @@ def recordVideo():
     camera.stop_recording()
     camera.stop_preview()
 
-def setState(state){
+def setState(state):
     if state == 'off':
         GPIO.output(RELAY1, True)
         GPIO.output(RELAY2, True)
@@ -90,11 +90,13 @@ def setState(state){
         inOut = True
         tickCounter = 800 #about one min
         inOnVar = True
-    else state == 'outOn':
+    elif state == 'outOn':
         GPIO.output(RELAY1, False)
         GPIO.output(RELAY2, False)
         tickConuter = 800 #about a min
-}
+    else:
+        state = 'off'
+        setState(state)
 
     #scp video to other computer
     try:
