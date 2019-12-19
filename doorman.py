@@ -76,6 +76,7 @@ def recordVideo():
 
     #scp video to other computer
     try:
+        print('Requesting file transfer')
         subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
         print('Sending video to file server')
         subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
