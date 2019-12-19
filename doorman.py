@@ -68,6 +68,7 @@ def getDistance(trig, echo):
     distance = sig_time / 0.000058
 
     time.sleep(SLEEPDUR)
+
     return distance
 
 def recordVideo():
@@ -90,13 +91,14 @@ def recordVideo():
 
 
 def setState(state):
+    global tickCounter
+
     if state == 'off':
         GPIO.output(RELAY1, True)
         GPIO.output(RELAY2, True)
         inOnVar = False
     elif state == 'inOn':
         GPIO.output(RELAY2, False)
-        inOut = True
         tickCounter = 800 #about one min
         inOnVar = True
     elif state == 'outOn':
