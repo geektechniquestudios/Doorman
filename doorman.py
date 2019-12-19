@@ -11,21 +11,22 @@ TRIG1 = 4
 ECHO1 = 18
 TRIG2 = 22
 ECHO2 = 24
-RELAY1 = 17
-RELAY2 = 27
+RELAY1 = 17 #outside
+RELAY2 = 27 #inside
 
-#constants @todo rewrite these in all caps everywhere in program
-maxTime = .5
-threshold1 = 210
-threshold2 = 65
-sleepDur = 0.02
+#constants
+MAXTIME = .5
+THRESHOLD1 = 210
+THRESHOLD2 = 65
+SLEEPDUR = 0.02
 
 recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
 
 tickCounter = 0 # 100 ticks is about 8 seconds
+inOnVar = false
 #for testing
-#threshold1 = 10
-#threshold2 = 10
+#THRESHOLD1 = 10
+#THRESHOLD2 = 10
 
 #arrays for fault tolerance
 distance1Arr = [300, 300, 300, 300]
@@ -54,30 +55,46 @@ def getDistance(trig, echo):
     GPIO.output(trig, False)
 
     start = time.time()
-    timeout = start + maxTime
+    timeout = start + MAXTIME
     while GPIO.input(echo) == False and start < timeout:
         start = time.time()
 
     end = time.time()
-    timeout = end + maxTime
+    timeout = end + MAXTIME
     while GPIO.input(echo) == True and end < timeout:
         end = time.time()
 
     sig_time = end-start
     distance = sig_time / 0.000058
 
-    time.sleep(sleepDur)
+    time.sleep(SLEEPDUR)
     return distance
 
-def recordVideo(recordingTime):
+def recordVideo():
     now = datetime.now()
     camera.start_preview(fullscreen=False, window = (170, 485, 640, 480))
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
     camera.start_recording(recordingPath + recordingFilename)
     print('Now Recording')
-    time.sleep(recordingTime)
+    time.sleep(30)
     camera.stop_recording()
     camera.stop_preview()
+
+def setState(state){
+    if state == 'off':
+        GPIO.output(RELAY1, True)
+        GPIO.output(RELAY2, True)
+        inOnVar = False
+    elif state == 'inOn':
+        GPIO.output(RELAY2, False)
+        inOut = True
+        tickCounter = 800 #about one min
+        inOnVar = True
+    else state == 'outOn':
+        GPIO.output(RELAY1, False)
+        GPIO.output(RELAY2, False)
+        tickConuter = 800 #about a min
+}
 
     #scp video to other computer
     try:
@@ -99,37 +116,40 @@ try:
         #add new values to arrays
         distance1Arr.append(distance1)
         distance2Arr.append(distance2)
+        #maintain arrays by removing old values
+        distance1Arr.pop(0)
+        distance2Arr.pop(0)
 
         #makes sure at least 4 lines have been printed before using array
         #if len(distance1Arr) > 4:
 
         #if distance thresholds are cleared, turn off the light
-        if tickCounter <= 0 and distance1Arr[0] >= threshold1 and distance1Arr[1] >= threshold1 and distance1Arr[2] >= threshold1 and distance1Arr[3] >= threshold1 and distance2Arr[0] >= threshold2 and distance2Arr[1] >= threshold2 and distance2Arr[2] >= threshold2 and distance2Arr[3] >= threshold2:
-            GPIO.output(RELAY1, True)
-            GPIO.output(RELAY2, True)
+        if tickCounter <= 0 and distance1Arr[0] >= THRESHOLD1 and distance1Arr[1] >= THRESHOLD1 and distance1Arr[2] >= THRESHOLD1 and distance1Arr[3] >= THRESHOLD1 and distance2Arr[0] >= THRESHOLD2 and distance2Arr[1] >= THRESHOLD2 and distance2Arr[2] >= THRESHOLD2 and distance2Arr[3] >= THRESHOLD2:
+            setState('off')
+            # GPIO.output(RELAY1, True)
+            # GPIO.output(RELAY2, True)
 
-        #maintain arrays by removing old values
-        distance1Arr.pop(0)
-        distance2Arr.pop(0)
+        #if sensor inside is tripped, turn on inside light
+        if distance1Arr[0] < THRESHOLD1 and distance1Arr[1] < THRESHOLD1 and distance1Arr[2] < THRESHOLD1 and distance1Arr[3] < THRESHOLD1:
+            setState('inOn')
+            
+            #GPIO.output(RELAY1, False)
+            #GPIO.output(RELAY2, False)
+            # if tickCounter == 0:
+            #     recordVideo(30)
+            # tickCounter = 800 #about a minute
 
-        #if sensor inside is tripped, turn on both lights and record
-        if distance1Arr[0] < threshold1 and distance1Arr[1] < threshold1 and distance1Arr[2] < threshold1 and distance1Arr[3] < threshold1:
-            GPIO.output(RELAY1, False)
-            GPIO.output(RELAY2, False)
-            if tickCounter == 0:
-                recordVideo(30)
-            tickCounter = 800 #about a minute
 
+        #(if inside light is on,) and the outside sensor is tripped, record
         #if sensor closest to the door is tripped, turn on inside light only and record
-        if distance2Arr[0] < threshold2 and distance2Arr[1] < threshold2 and distance2Arr[2] < threshold2 and distance2Arr[3] < threshold2:
-            GPIO.output(RELAY2, False)
-            if tickCounter == 0:
-                recordVideo(15)
-            tickCounter = 800 #about a minute
+        if distance2Arr[0] < THRESHOLD2 and distance2Arr[1] < THRESHOLD2 and distance2Arr[2] < THRESHOLD2 and distance2Arr[3] < THRESHOLD2:
+            setState('outOn')
+            if tickCounter == 0 or inOnVar == True:
+                recordVideo()
 
         if tickCounter > 0:
             tickCounter = tickCounter - 1
-        time.sleep(sleepDur)
+        time.sleep(SLEEPDUR)
 except Exception as e:
     print(e)
 finally:
