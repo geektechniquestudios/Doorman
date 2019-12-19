@@ -102,7 +102,7 @@ def setState(state):
     elif state == 'outOn':
         GPIO.output(RELAY1, False)
         GPIO.output(RELAY2, False)
-        tickConuter = 800 #about a min
+        tickCounter = 800 #about a min
     else:
         state = 'off'
         setState(state)
