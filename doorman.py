@@ -141,7 +141,7 @@ try:
         if distance2Arr[0] < THRESHOLD2 and distance2Arr[1] < THRESHOLD2 and distance2Arr[2] < THRESHOLD2 and distance2Arr[3] < THRESHOLD2:
             if tickCounter == 0:
                 setState('inOn')
-            else
+            else:
                 setState('outOn')
             recordVideo()
 
