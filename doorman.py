@@ -21,11 +21,7 @@ THRESHOLD2 = 65
 SLEEPDUR = 0.02
 
 recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
-tickCounter = 0 # 100 ticks is about 8 seconds
-
-#for testing
-#THRESHOLD1 = 10
-#THRESHOLD2 = 10
+tickCounter = 0 # 1 tick ~= 80ms || 100 ticks ~= 8 seconds
 
 #arrays for fault tolerance
 distance1Arr = [300, 300, 300, 300]
@@ -66,8 +62,6 @@ def getDistance(trig, echo):
     sig_time = end-start
     distance = sig_time / 0.000058
 
-    time.sleep(SLEEPDUR)
-
     return distance
 
 def recordVideo():
@@ -103,19 +97,15 @@ def setState(state):
     elif state == 'outOn':
         GPIO.output(RELAY1, False)
         tickCounter = 800
-    # elif state == 'bothOn':
-    #     GPIO.output(RELAY1, False)
-    #     GPIO.output(RELAY2, False)
-        tickCounter = 800
-    else:#just in case
+    else:
         state = 'off'
         setState(state)
 
 try:
     while True:
-
         #get distance from sensors
         distance1 = getDistance(TRIG1, ECHO1)
+        time.sleep(SLEEPDUR)
         distance2 = getDistance(TRIG2, ECHO2)
 
         print('Distance1: {} cm ---- Distance2: {} cm ---- TickCounter: {}'.format(distance1, distance2, tickCounter))
@@ -126,8 +116,6 @@ try:
         #maintain arrays by removing old values
         distance1Arr.pop(0)
         distance2Arr.pop(0)
-
-        #makes sure at least 4 lines have been printed before using array
 
         #if distance thresholds are cleared, turn off the light
         if tickCounter <= 0 and distance1Arr[0] >= THRESHOLD1 and distance1Arr[1] >= THRESHOLD1 and distance1Arr[2] >= THRESHOLD1 and distance1Arr[3] >= THRESHOLD1 and distance2Arr[0] >= THRESHOLD2 and distance2Arr[1] >= THRESHOLD2 and distance2Arr[2] >= THRESHOLD2 and distance2Arr[3] >= THRESHOLD2:
