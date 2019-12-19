@@ -23,7 +23,7 @@ SLEEPDUR = 0.02
 recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
 
 tickCounter = 0 # 100 ticks is about 8 seconds
-inOnVar = false
+inOnVar = False
 #for testing
 #THRESHOLD1 = 10
 #THRESHOLD2 = 10
@@ -79,6 +79,15 @@ def recordVideo():
     time.sleep(30)
     camera.stop_recording()
     camera.stop_preview()
+    #scp video to other computer
+    try:
+        subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
+        print('Sending video to file server')
+        subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
+        print('Local file deleted')
+    except:
+        print('Failed to backup security footage to server')
+
 
 def setState(state):
     if state == 'off':
@@ -98,14 +107,6 @@ def setState(state):
         state = 'off'
         setState(state)
 
-    #scp video to other computer
-    try:
-        print('Sending video to file server')
-        subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
-        subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
-        print('Local file deleted')
-    except:
-        print('Failed to backup security footage to server')
 try:
     while True:
 
