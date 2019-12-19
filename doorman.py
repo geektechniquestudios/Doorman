@@ -23,7 +23,6 @@ SLEEPDUR = 0.02
 recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
 
 tickCounter = 0 # 100 ticks is about 8 seconds
-inOnVar = False
 #for testing
 #THRESHOLD1 = 10
 #THRESHOLD2 = 10
@@ -97,15 +96,16 @@ def setState(state):
     if state == 'off':
         GPIO.output(RELAY1, True)
         GPIO.output(RELAY2, True)
-        inOnVar = False
     elif state == 'inOn':
         GPIO.output(RELAY2, False)
         tickCounter = 800 #about one min
-        inOnVar = True
     elif state == 'outOn':
         GPIO.output(RELAY1, False)
+        tickCounter = 800
+    elif state == 'bothOn':
+        GPIO.output(RELAY1, False)
         GPIO.output(RELAY2, False)
-        tickCounter = 800 #about a min
+        tickCounter = 800
     else:
         state = 'off'
         setState(state)
@@ -146,12 +146,14 @@ try:
             # tickCounter = 800 #about a minute
 
 
-        #(if inside light is on,) and the outside sensor is tripped, record
+        #(if inside light is on,) and the outside sensor is tripped, record and turn on inlight
         #if sensor closest to the door is tripped, turn on inside light only and record
         if distance2Arr[0] < THRESHOLD2 and distance2Arr[1] < THRESHOLD2 and distance2Arr[2] < THRESHOLD2 and distance2Arr[3] < THRESHOLD2:
-            setState('outOn')
-            if tickCounter == 0 or inOnVar == True:
-                recordVideo()
+            if tickCounter == 0:
+                setState('inOn')
+            else
+                setState('outOn')
+            recordVideo()
 
         if tickCounter > 0:
             tickCounter = tickCounter - 1
