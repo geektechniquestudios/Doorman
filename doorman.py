@@ -38,6 +38,14 @@ GPIO.setup(RELAY2, GPIO.OUT)
 GPIO.output(RELAY1, True)
 GPIO.output(RELAY2, True)
 
+#make lights flicker so I know if something goes wrong
+def lightFlicker(x):
+    for i in range(x):
+        GPIO.output(RELAY2, True)
+        time.sleep(1)
+        GPIO.output(RELAY2, False)
+        time.sleep(1)
+
 #method for ultrasonic sensors' distances
 def getDistance(trig, echo):
     GPIO.output(trig, True)
@@ -80,15 +88,8 @@ def recordVideo():
         print('Local file deleted')
     except:
         print('Failed to backup security footage to server')
+        lightFlicker(3)
 
-        #make lights flicker so I know if something goes wrong
-        GPIO.output(RELAY2, True)
-        time.sleep(1)
-        GPIO.output(RELAY2, False)
-        time.sleep(1)
-        GPIO.output(RELAY2, True)
-        time.sleep(1)
-        GPIO.output(RELAY2, False)
 
 def setState(state):
     global tickCounter
