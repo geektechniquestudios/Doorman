@@ -39,11 +39,9 @@ GPIO.setup(RELAY2, GPIO.OUT)
 GPIO.output(RELAY1, True)
 GPIO.output(RELAY2, True)
 
-#setup pi camera
-camera = PiCamera()
-camera.rotation = 270
+#setup pi camera #attempting move
 
-#method for ultrasonic sensors' distance
+#method for ultrasonic sensors' distances
 def getDistance(trig, echo):
     GPIO.output(trig, True)
     time.sleep(0.0001)
@@ -65,6 +63,8 @@ def getDistance(trig, echo):
     return distance
 
 def recordVideo():
+    camera = PiCamera()
+    camera.rotation = 270
     now = datetime.now()
     camera.start_preview(fullscreen=False, window = (170, 485, 640, 480))
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
@@ -73,11 +73,12 @@ def recordVideo():
     time.sleep(30)
     camera.stop_recording()
     camera.stop_preview()
+    camera.close()
 
     #scp video to other computer
     try:
         print('Requesting file transfer')
-        subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.4:/home/pi/Desktop/security_footage/' + recordingFilename], shell = True)
+        subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.6:/media/pi/security_drive/' + recordingFilename], shell = True)
         print('Sending video to file server')
         subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
         print('Local file deleted')
