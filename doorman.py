@@ -145,6 +145,6 @@ try:
         time.sleep(SLEEPDUR)
 except Exception as e:
     print(e)
-    flicker(1)
+    lightFlicker(1)
 finally:
     GPIO.cleanup()
