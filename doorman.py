@@ -19,7 +19,6 @@ MAXTIME = .5
 THRESHOLD1 = 210
 THRESHOLD2 = 65
 SLEEPDUR = 0.02
-
 recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
 tickCounter = 0 # 1 tick ~= 80ms || 100 ticks ~= 8 seconds
 
@@ -39,8 +38,6 @@ GPIO.setup(RELAY2, GPIO.OUT)
 GPIO.output(RELAY1, True)
 GPIO.output(RELAY2, True)
 
-#setup pi camera #attempting move
-
 #method for ultrasonic sensors' distances
 def getDistance(trig, echo):
     GPIO.output(trig, True)
@@ -58,11 +55,10 @@ def getDistance(trig, echo):
         end = time.time()
 
     sig_time = end-start
-    distance = sig_time / 0.000058
-
-    return distance
+    return sig_time / 0.000058
 
 def recordVideo():
+    global recordingPath
     camera = PiCamera()
     camera.rotation = 270
     now = datetime.now()
@@ -85,6 +81,14 @@ def recordVideo():
     except:
         print('Failed to backup security footage to server')
 
+        #make lights flicker so I know if something goes wrong
+        GPIO.output(RELAY2, True)
+        time.sleep(1)
+        GPIO.output(RELAY2, False)
+        time.sleep(1)
+        GPIO.output(RELAY2, True)
+        time.sleep(1)
+        GPIO.output(RELAY2, False)
 
 def setState(state):
     global tickCounter
