@@ -19,8 +19,11 @@ MAXTIME = .5
 THRESHOLD1 = 210
 THRESHOLD2 = 65
 SLEEPDUR = 0.02
-recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
+RECORDINGPATH = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
+
+#global vars
 tickCounter = 0 # 1 tick ~= 80ms || 100 ticks ~= 8 seconds
+metaTick = 0
 
 #arrays for fault tolerance
 distance1Arr = [300, 300, 300, 300]
@@ -41,9 +44,9 @@ GPIO.output(RELAY2, True)
 #make lights flicker so I know if something goes wrong
 def lightFlicker(x):
     for i in range(x):
-        GPIO.output(RELAY2, True)
-        time.sleep(1)
         GPIO.output(RELAY2, False)
+        time.sleep(1)
+        GPIO.output(RELAY2, True)
         time.sleep(1)
 
 #method for ultrasonic sensors' distances
@@ -66,13 +69,14 @@ def getDistance(trig, echo):
     return sig_time / 0.000058
 
 def recordVideo():
-    global recordingPath
+    global RECORDINGPATH
+    
     camera = PiCamera()
     camera.rotation = 270
     now = datetime.now()
     camera.start_preview(fullscreen=False, window = (170, 485, 640, 480))
     recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
-    camera.start_recording(recordingPath + recordingFilename)
+    camera.start_recording(RECORDINGPATH + recordingFilename)
     print('Now Recording')
     time.sleep(30)
     camera.stop_recording()
@@ -82,9 +86,9 @@ def recordVideo():
     #scp video to other computer
     try:
         print('Requesting file transfer')
-        subprocess.call(['scp ' + recordingPath + recordingFilename + ' pi@10.0.0.6:/media/pi/security_drive/' + recordingFilename], shell = True)
+        subprocess.call(['scp ' + RECORDINGPATH + recordingFilename + ' pi@10.0.0.6:/media/pi/security_drive/' + recordingFilename], shell = True)
         print('Sending video to file server')
-        subprocess.call(['rm ' + recordingPath + recordingFilename], shell = True)
+        subprocess.call(['rm ' + RECORDINGPATH + recordingFilename], shell = True)
         print('Local file deleted')
     except:
         print('Failed to backup security footage to server')
@@ -94,16 +98,20 @@ def recordVideo():
 def setState(state):
     global tickCounter
     global inOnVar
+    global metaTick
 
     if state == 'off':
         GPIO.output(RELAY1, True)
         GPIO.output(RELAY2, True)
+        metaTick = 0
     elif state == 'inOn':
         GPIO.output(RELAY2, False)
         tickCounter = 800 #about one min
+        metaTick = 100
     elif state == 'outOn':
         GPIO.output(RELAY1, False)
         tickCounter = 800
+        metaTick = 100
     else:
         state = 'off'
         setState(state)
@@ -129,7 +137,7 @@ try:
             setState('off')
 
         #if sensor inside is tripped, turn on inside light
-        if distance1Arr[0] < THRESHOLD1 and distance1Arr[1] < THRESHOLD1 and distance1Arr[2] < THRESHOLD1 and distance1Arr[3] < THRESHOLD1:
+        if distance1Arr[0] < THRESHOLD1 and distance1Arr[1] < THRESHOLD1 and distance1Arr[2] < THRESHOLD1 and distance1Arr[3] < THRESHOLD1 and metaTick != -1:
             setState('inOn')
 
         #outside sensor tripped: if inside light is off, turn it on, otherwise, turn on outside light
@@ -140,8 +148,17 @@ try:
                 setState('outOn')
             recordVideo()
 
-        if tickCounter > 0:
+        if tickCounter > 700:
+            metaTick = metaTick - 1
+
+        elif tickCounter > 0:
             tickCounter = tickCounter - 1
+
+        if metaTick <= -1:
+            setState('off')
+
+
+
         time.sleep(SLEEPDUR)
 except Exception as e:
     print(e)
