@@ -123,7 +123,7 @@ try:
         time.sleep(SLEEPDUR)
         distance2 = getDistance(TRIG2, ECHO2)
 
-        print('Distance1: {} cm ---- Distance2: {} cm ---- TickCounter: {}'.format(distance1, distance2, tickCounter))
+        print('Distance1: {} cm - Distance2: {} cm - TickCounter: {} - MetaTick : {}'.format(distance1, distance2, tickCounter, metaTick))
 
         #add new values to arrays
         distance1Arr.append(distance1)
