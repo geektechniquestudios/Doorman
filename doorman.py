@@ -151,7 +151,7 @@ try:
         if tickCounter > 700:
             metaTick = metaTick - 1
 
-        elif tickCounter > 0:
+        if tickCounter > 0:
             tickCounter = tickCounter - 1
 
         if metaTick <= -1:
