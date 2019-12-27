@@ -19,7 +19,8 @@ MAXTIME = .5
 THRESHOLD1 = 210
 THRESHOLD2 = 65
 SLEEPDUR = 0.02
-recordingPath = '/home/pi/Desktop/FrontDoorSensor/doorcam/'
+recordingPath = './'
+#'/home/pi/Desktop/FrontDoorSensor/doorcam/'
 tickCounter = 0 # 1 tick ~= 80ms || 100 ticks ~= 8 seconds
 
 #arrays for fault tolerance
@@ -71,7 +72,7 @@ def recordVideo():
     camera.rotation = 270
     now = datetime.now()
     camera.start_preview(fullscreen=False, window = (170, 485, 640, 480))
-    recordingFilename = 'security' + now.strftime("_%m-%d-%Y_%H:%M:%S") + '.h264'
+    recordingFilename = 'security' + now.strftime("--%m-%d-%Y--%H-%M-%S") + '.h264'
     camera.start_recording(recordingPath + recordingFilename)
     print('Now Recording')
     time.sleep(30)
