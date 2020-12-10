@@ -1,5 +1,5 @@
 # **WIP**
-###### please excuse the state of this readme, I've had to pick and choose my prioritiies lately. 
+###### please excuse the state of this readme, I've had to pick and choose my prioritiies lately, so this is on my backburner. 
 ---
 ---
 # Doorman
