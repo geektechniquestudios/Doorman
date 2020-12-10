@@ -1,4 +1,5 @@
-# **Currently Under Construction**
+# **WIP**
+###### please excuse the state of this readme, I've had to pick and choose my prioritiies lately. 
 ---
 ---
 # Doorman
@@ -24,7 +25,7 @@ To use the software, just run the `doorman.py` file.
   - [display](https://www.amazon.com/ELECROW-Display-1024X600-Function-Raspberry/dp/B01GDMDFZA/ref=sr_1_1_sspa?crid=2RTSG59KNY467&dchild=1&keywords=pi+display&qid=1602988546&sprefix=pi+disp%2Caps%2C150&sr=8-1-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUFDWlBFNVpLV1YxRjQmZW5jcnlwdGVkSWQ9QTA4MTYzNDgzVDBaWjhBSk9MN0gyJmVuY3J5cHRlZEFkSWQ9QTA4NTE1MDkyVFdNVjdVSUtYSTU4JndpZGdldE5hbWU9c3BfYXRmJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ==)
 
 ## Wiring
-  [img of the wiring]
+  [img of the wiring to come]
   
 ## Notes
   - Ultrasonics frequently give false reads, so there is some included fault tolerance that you can adjust in the main script.
