@@ -1,14 +1,14 @@
 # Doorman
 
-### This is a personal Raspberry Pi project that uses two sonar to operate a relay and camera while displaying a dashboard.
+##### A Raspberry Pi project that uses two sonar to operate a relay and camera while displaying a dashboard.
 
-#### [Video Demo](https://www.youtube.com/watch?v=LjEhM52aX-M)
+#### [Watch a video about it](https://www.youtube.com/watch?v=LjEhM52aX-M)
 
 ![](doorman.jpg)
 
-This software uses ultrasonic sensors, relays, a security camera, and a display with my calendar, weather, and commute. Not only does the camera take a video; the pi sends that video to another computer on my local network. You could easily add a line to send your security footage to [dropbox](https://www.dropbox.com/developers/documentation/python#tutorial) or any other remote location. It also operates my lights by the front door with context, only turning on each light when it makes sense. There's also a browser based service that I crontab to run full screen on boot called [dakboard](https://www.dakboard.com/site). It shows my calendar, the weather, and my commute.
+This software uses sonar sensors, relays, a security camera, and a display with my calendar, weather, and commute. Not only does the camera take a video; the pi sends that video to another computer on my local network. You could easily add a line to send your security footage to [dropbox](https://www.dropbox.com/developers/documentation/python#tutorial) or any other remote location. It also operates my lights by the front door with context, only turning on each light when it makes sense. There's also a browser based service that I crontab to run full screen on boot called [dakboard](https://www.dakboard.com/site). It shows my calendar, the weather, and my commute.
 
-To use the software, just run the `doorman.py` file.
+To use the software, just run the `doorman.py` file with python3. 
 
 ## Parts List
 
@@ -27,8 +27,8 @@ To use the software, just run the `doorman.py` file.
 
 ## Notes
 
-- I unfortunately didn't make a wiring diagram. It wouldn't be that hard to figure out, but just know that you're going in blind if you intend to use this code.
-- Sonar are frequently unreliable, so there is some included fault tolerance that you can adjust in the main script.
+- I unfortunately didn't make a wiring diagram. It wouldn't be that hard to figure out, but just know that you're going in blind if you intend to use this code. This repository is not maintained.
+- Sonar is frequently unreliable, so there is some included fault tolerance that you can adjust in the main script.
 - In case you've never messed with a home electrical outlet, they are **high voltage and can kill you**. Do NOT mess with wires in the wall of a house unless are qualified to do so.
 
 ###### feedback is welcome
